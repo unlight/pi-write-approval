@@ -1,6 +1,6 @@
 {
   "name": "pi-write-approval",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Opt-in approval prompts for file writes, edits and shell deletions in Pi",
   "type": "module",
   "license": "MIT",
