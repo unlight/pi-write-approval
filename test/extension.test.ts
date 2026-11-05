@@ -21,6 +21,8 @@ interface HarnessOptions {
   hasUI?: boolean;
   confirm?: boolean;
   flag?: boolean;
+  /** Simulate a runtime without a theme, as RPC and headless modes do. */
+  withoutTheme?: boolean;
 }
 
 /** Minimal stand-in for the Pi runtime: records UI calls, replays handlers. */
@@ -52,11 +54,16 @@ function createHarness(options: HarnessOptions = {}) {
     },
   };
 
+  const theme = {
+    // Mirrors Theme.fg's contract: wrap the text in the color's escape sequence.
+    fg: (color: string, text: string) => `[${color}]${text}`,
+  };
+
   const ctx = {
     hasUI,
     mode: 'tui',
     cwd: USER_ROOT,
-    ui,
+    ui: options.withoutTheme ? ui : { ...ui, theme },
   } as unknown as ExtensionContext;
 
   const pi = {
@@ -152,10 +159,16 @@ describe('default state', () => {
     assert.deepEqual(harness.asked, []);
   });
 
-  it('shows the OFF indicator at startup', async () => {
+  it('shows the dimmed OFF indicator at startup', async () => {
     const harness = createHarness();
     await harness.startSession();
-    assert.deepEqual(harness.statuses, [STATUS_TEXT.off]);
+    assert.deepEqual(harness.statuses, [`[dim]${STATUS_TEXT.off}`]);
+  });
+
+  it('falls back to plain text without a theme', async () => {
+    const harness = createHarness({ withoutTheme: true });
+    await harness.startSession();
+    assert.equal(harness.statuses.at(-1), STATUS_TEXT.off);
   });
 });
 
@@ -169,7 +182,7 @@ describe('enabled via command', () => {
     assert.equal(harness.asked.length, 1);
     assert.equal(harness.asked[0]?.title, 'Approve file write?');
     assert.equal(result?.block, true);
-    assert.equal(harness.statuses.at(-1), STATUS_TEXT.on);
+    assert.equal(harness.statuses.at(-1), `[dim]${STATUS_TEXT.on}`);
   });
 
   it('lets the write through when the user confirms', async () => {
@@ -225,7 +238,7 @@ describe('enabled via command', () => {
     await harness.runCommand('on');
     await harness.callTool('write', { path: inUserRoot('notes.md') });
     await harness.runCommand('off');
-    assert.equal(harness.statuses.at(-1), STATUS_TEXT.off);
+    assert.equal(harness.statuses.at(-1), `[dim]${STATUS_TEXT.off}`);
     assert.equal(
       await harness.callTool('write', { path: inUserRoot('other.md') }),
       undefined,
@@ -285,7 +298,7 @@ describe('CLI flag', () => {
     const harness = createHarness({ confirm: false });
     harness.setFlag(true);
     await harness.startSession();
-    assert.equal(harness.statuses.at(-1), STATUS_TEXT.on);
+    assert.equal(harness.statuses.at(-1), `[dim]${STATUS_TEXT.on}`);
     const result = await harness.callTool('write', {
       path: inUserRoot('notes.md'),
     });

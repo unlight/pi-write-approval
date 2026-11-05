@@ -35,8 +35,8 @@ Remove with `pi remove /path/to/pi-write-approval`.
 | `pi --write-approval`                         | Start every session with approval on   |
 
 The footer always carries the indicator: `Write approval: ON` while prompts are active,
-`Write approval: OFF` otherwise. The text is plain, so it renders in the theme's default
-color.
+`Write approval: OFF` otherwise. It uses the theme's `dim` token, the same styling the
+footer applies to its own lines.
 
 The state is session-scoped: a new session starts from the `--write-approval` flag
 (default off).
