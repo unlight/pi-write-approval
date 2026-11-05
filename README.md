@@ -77,29 +77,6 @@ Not covered by design: truncating `bash` redirections (`> file`), `mv` over an e
 file, `sed -i`, `truncate`, `dd`, the `powershell` tool, and deletion performed by scripts
 started through `bash`.
 
-## Release
-
-Publishing runs on GitHub Actions (`.github/workflows/ci.yml`). Every push and pull
-request runs `npm run check`; a push to `master` or `next` additionally runs
-`semantic-release`, which derives the version from Conventional Commits, updates
-`CHANGELOG.md`, publishes to npm and pushes the version commit plus the tag.
-
-Before the first release:
-
-- create the GitHub repository and push this history to `master` (semantic-release needs
-  the tags and commits, hence `fetch-depth: 0` in the workflow);
-- add an `NPM_TOKEN` repository secret — an npm automation token with publish rights for
-  `pi-write-approval` (automation tokens bypass 2FA);
-- `GITHUB_TOKEN` is built in; the workflow requests `contents: write` because
-  `@semantic-release/git` pushes the release commit.
-
-Commit types drive the bump — `feat:` → minor, `fix:` → patch, `BREAKING CHANGE:` →
-major, while `chore:`/`docs:`/`style:`/`refactor:` alone publish nothing. The initial
-`1.0.0` is already published; semantic-release continues from the latest tag (`v1.0.0`).
-
-The package has no build step: the tarball ships `src/`, `README.md` and `package.json`
-(see the `files` field), which is exactly what Pi loads.
-
 ## Development
 
 ```bash
