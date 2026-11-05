@@ -15,7 +15,12 @@ import { evaluateToolCall } from './policy.ts';
 /** Slash command, CLI flag and footer status share one identifier. */
 export const EXTENSION_ID = 'write-approval';
 export const SHORTCUT = 'ctrl+alt+a';
-const STATUS_ON = 'approval: ON';
+/** Footer indicator per state; ON is green, OFF is dimmed. */
+export const STATUS_TEXT = {
+  on: 'Write approval: ON',
+  off: 'Write approval: OFF',
+} as const;
+type StatusColor = 'success' | 'dim';
 
 interface GateState {
   enabled: boolean;
@@ -42,7 +47,11 @@ export default function writeApprovalExtension(pi: ExtensionAPI): void {
   const state: GateState = { enabled: false };
 
   const renderStatus = (ctx: ExtensionContext): void => {
-    ctx.ui.setStatus(EXTENSION_ID, state.enabled ? STATUS_ON : undefined);
+    const text = state.enabled ? STATUS_TEXT.on : STATUS_TEXT.off;
+    const color: StatusColor = state.enabled ? 'success' : 'dim';
+    // RPC and headless contexts expose no theme, so fall back to plain text.
+    const colored = ctx.ui.theme?.fg(color, text) ?? text;
+    ctx.ui.setStatus(EXTENSION_ID, colored);
   };
 
   const setEnabled = (enabled: boolean, ctx: ExtensionContext): void => {
