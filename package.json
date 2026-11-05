@@ -10,6 +10,14 @@
     "pi-coding-agent",
     "approval"
   ],
+  "homepage": "https://github.com/unlight/pi-write-approval#readme",
+  "bugs": {
+    "url": "https://github.com/unlight/pi-write-approval/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unlight/pi-write-approval.git"
+  },
   "files": [
     "src",
     "README.md",
