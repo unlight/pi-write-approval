@@ -7,21 +7,27 @@ Turn it on for the current session and Pi asks before every write, edit and dele
 
 ## Install
 
-The package is loaded from this directory without copying, so edits take effect on `/reload`.
-
 ```bash
-pi install /path/to/pi-write-approval
+pi install npm:pi-write-approval
 ```
 
-Manual alternative — add the path to `~/.pi/agent/settings.json`:
+Manual alternative — add the package to `~/.pi/agent/settings.json`:
 
 ```json
 {
-  "extensions": ["/path/to/pi-write-approval"]
+  "packages": ["npm:pi-write-approval"]
 }
 ```
 
-Remove with `pi remove /path/to/pi-write-approval`.
+Remove with `pi remove npm:pi-write-approval`. Updates arrive with
+`pi update --extensions`.
+
+To run a local checkout instead of the published package — the working copy is loaded
+without copying, so edits take effect on `/reload`:
+
+```bash
+pi -e /path/to/pi-write-approval
+```
 
 ## Usage
 
@@ -87,10 +93,9 @@ Before the first release:
 - `GITHUB_TOKEN` is built in; the workflow requests `contents: write` because
   `@semantic-release/git` pushes the release commit.
 
-The initial release is `1.0.0`: semantic-release starts its version line from scratch
-regardless of the current `version` field. Commit types drive the bump — `feat:` → minor,
-`fix:` → patch, `BREAKING CHANGE:` → major, and `chore:`/`docs:`/`style:`/`refactor:`
-alone publish nothing.
+Commit types drive the bump — `feat:` → minor, `fix:` → patch, `BREAKING CHANGE:` →
+major, while `chore:`/`docs:`/`style:`/`refactor:` alone publish nothing. The initial
+`1.0.0` is already published; semantic-release continues from the latest tag (`v1.0.0`).
 
 The package has no build step: the tarball ships `src/`, `README.md` and `package.json`
 (see the `files` field), which is exactly what Pi loads.
