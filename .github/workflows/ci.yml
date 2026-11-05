@@ -1,0 +1,42 @@
+name: Continuous Integration
+on:
+  - push
+  - pull_request
+
+jobs:
+  build:
+    name: 'Test, release'
+    runs-on: ubuntu-latest
+    permissions:
+      # Provenance for the npm publish.
+      id-token: write
+      # @semantic-release/git pushes the version commit and the tag.
+      contents: write
+      # @semantic-release/github comments on released issues and PRs.
+      issues: write
+      pull-requests: write
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v6
+        with:
+          # semantic-release needs the full history and the tags.
+          fetch-depth: 0
+
+      - name: 'Setup Node'
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: 'Install Dependencies'
+        run: npm ci
+
+      - name: 'Format, typecheck and test'
+        run: npm run check
+
+      - name: 'Release'
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next')
+        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
