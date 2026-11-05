@@ -133,7 +133,7 @@ describe('registration', () => {
   it('registers the command, the shortcut, the flag and the handlers', () => {
     const harness = createHarness();
     assert.ok(harness.commands.has(EXTENSION_ID));
-    assert.equal(harness.shortcut, 'ctrl+alt+a');
+    assert.equal(harness.shortcut, 'ctrl+alt+w');
     assert.ok(
       harness.commands.get(EXTENSION_ID)?.getArgumentCompletions?.('o'),
     );

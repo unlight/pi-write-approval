@@ -31,8 +31,13 @@ Remove with `pi remove /path/to/pi-write-approval`.
 | `/write-approval on`                          | Ask before writes, edits and deletions |
 | `/write-approval off`                         | Back to plain Pi behavior              |
 | `/write-approval status`                      | Report the current state               |
-| `ctrl+alt+a`                                  | Flip the switch                        |
+| `ctrl+alt+w`                                  | Flip the switch, same as the command   |
 | `pi --write-approval`                         | Start every session with approval on   |
+
+The keyboard shortcut works in both states and is registered by `pi.registerShortcut`
+from the `SHORTCUT` constant in `src/index.ts` — change it there if your terminal or
+window manager already grabs `ctrl+alt+w`. No other loaded extension or built-in Pi
+binding uses that combination (the only built-in `ctrl+alt` shortcut is `ctrl+alt+]`).
 
 The footer always carries the indicator: `Write approval: ON` in the default foreground
 while prompts are active, `Write approval: OFF` dimmed like the footer's own lines

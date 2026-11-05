@@ -1,7 +1,7 @@
 /**
  * Opt-in confirmation gate for tool writes, edits and shell deletions.
  * Default state is plain Pi behavior (no prompts); the gate can be enabled for
- * the current session with `/write-approval`, `ctrl+alt+a`, or `--write-approval`.
+ * the current session with `/write-approval`, `ctrl+alt+w`, or `--write-approval`.
  */
 
 import type {
@@ -14,7 +14,7 @@ import { evaluateToolCall } from './policy.ts';
 
 /** Slash command, CLI flag and footer status share one identifier. */
 export const EXTENSION_ID = 'write-approval';
-export const SHORTCUT = 'ctrl+alt+a';
+export const SHORTCUT = 'ctrl+alt+w';
 /** Footer indicator per state. */
 export const STATUS_TEXT = {
   on: 'Write approval: ON',
