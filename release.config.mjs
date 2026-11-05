@@ -20,12 +20,8 @@ export default {
     // No build step: the published package is the TypeScript source Pi loads.
     '@semantic-release/npm',
     '@semantic-release/github',
-    [
-      '@semantic-release/git',
-      {
-        assets: ['CHANGELOG.md', 'package.json', 'package-lock.json'],
-        message: 'chore(release): ${nextRelease.version} [skip ci]',
-      },
-    ],
+    // Commits CHANGELOG.md, package.json and package-lock.json with the default
+    // 'chore(release): <version> [skip ci]' message plus the release notes.
+    '@semantic-release/git',
   ],
 };
