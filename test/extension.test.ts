@@ -182,7 +182,7 @@ describe('enabled via command', () => {
     assert.equal(harness.asked.length, 1);
     assert.equal(harness.asked[0]?.title, 'Approve file write?');
     assert.equal(result?.block, true);
-    assert.equal(harness.statuses.at(-1), `[dim]${STATUS_TEXT.on}`);
+    assert.equal(harness.statuses.at(-1), STATUS_TEXT.on);
   });
 
   it('lets the write through when the user confirms', async () => {
@@ -298,7 +298,7 @@ describe('CLI flag', () => {
     const harness = createHarness({ confirm: false });
     harness.setFlag(true);
     await harness.startSession();
-    assert.equal(harness.statuses.at(-1), `[dim]${STATUS_TEXT.on}`);
+    assert.equal(harness.statuses.at(-1), STATUS_TEXT.on);
     const result = await harness.callTool('write', {
       path: inUserRoot('notes.md'),
     });

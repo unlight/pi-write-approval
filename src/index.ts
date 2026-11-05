@@ -46,10 +46,11 @@ export default function writeApprovalExtension(pi: ExtensionAPI): void {
   const state: GateState = { enabled: false };
 
   const renderStatus = (ctx: ExtensionContext): void => {
-    const text = state.enabled ? STATUS_TEXT.on : STATUS_TEXT.off;
-    // Same dim styling the footer applies to its own lines.
-    const dimmed = ctx.ui.theme?.fg('dim', text) ?? text;
-    ctx.ui.setStatus(EXTENSION_ID, dimmed);
+    // ON stands out in the default foreground, OFF blends into the dim footer.
+    const text = state.enabled
+      ? STATUS_TEXT.on
+      : (ctx.ui.theme?.fg('dim', STATUS_TEXT.off) ?? STATUS_TEXT.off);
+    ctx.ui.setStatus(EXTENSION_ID, text);
   };
 
   const setEnabled = (enabled: boolean, ctx: ExtensionContext): void => {
