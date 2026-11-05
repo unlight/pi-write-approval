@@ -1,59 +1,59 @@
-# pi-write-permission
+# pi-write-approval
 
-Opt-in confirmation gate for file writes, edits and shell deletions in [Pi](https://pi.dev).
+Opt-in approval prompts for file writes, edits and shell deletions in [Pi](https://pi.dev).
 
-Default Pi behavior is unchanged: the gate is **off** and nothing asks for permission.
-Enable it for the current session and Pi asks before every write, edit and deletion.
+Default Pi behavior is unchanged: approval is **off** and nothing asks for permission.
+Turn it on for the current session and Pi asks before every write, edit and deletion.
 
 ## Install
 
 The package is loaded from this directory without copying, so edits take effect on `/reload`.
 
 ```bash
-pi install /path/to/write-permission
+pi install /path/to/pi-write-approval
 ```
 
 Manual alternative — add the path to `~/.pi/agent/settings.json`:
 
 ```json
 {
-  "extensions": ["/path/to/write-permission"]
+  "extensions": ["/path/to/pi-write-approval"]
 }
 ```
 
-Remove with `pi remove /path/to/write-permission`.
+Remove with `pi remove /path/to/pi-write-approval`.
 
 ## Usage
 
-| Action                                            | Effect                                    |
-| ------------------------------------------------- | ----------------------------------------- |
-| `/write-permission` or `/write-permission toggle` | Flip the gate                             |
-| `/write-permission on`                            | Ask before writes, edits and deletions    |
-| `/write-permission off`                           | Back to plain Pi behavior                 |
-| `/write-permission status`                        | Report the current state                  |
-| `ctrl+alt+a`                                      | Flip the gate                             |
-| `pi --write-permission`                           | Start every session with the gate enabled |
+| Action                                        | Effect                                 |
+| --------------------------------------------- | -------------------------------------- |
+| `/write-approval` or `/write-approval toggle` | Flip the switch                        |
+| `/write-approval on`                          | Ask before writes, edits and deletions |
+| `/write-approval off`                         | Back to plain Pi behavior              |
+| `/write-approval status`                      | Report the current state               |
+| `ctrl+alt+a`                                  | Flip the switch                        |
+| `pi --write-approval`                         | Start every session with approval on   |
 
-While the gate is on, the footer shows `write gate: ON`.
+While approval is on, the footer shows `approval: ON`.
 
-The state is session-scoped: a new session starts from the `--write-permission` flag
+The state is session-scoped: a new session starts from the `--write-approval` flag
 (default off).
 
-## What is gated
+## What asks for approval
 
-Enabled gate asks for confirmation on:
+With approval on, Pi asks before:
 
 - `write` and `edit` tool calls outside the temp directory;
 - `bash` calls that delete files or directories (`rm`, `rmdir`, `unlink`, `trash`,
   `trash-put`, `shred`, `find ... -delete`), unless every delete operand lives in the
   temp directory.
 
-Never gated: `read`, `grep`, `ls`, `find`, non-deleting `bash` commands, and every path
+Never asked: `read`, `grep`, `ls`, `find`, non-deleting `bash` commands, and every path
 inside `os.tmpdir()` (on macOS also the shared `/tmp`, `/private/tmp` included). Both
 `/` and `\` separators are recognized, so Windows paths are covered as well.
 
 In modes without a UI (`-p`, `--mode json`) a blocked call fails with a reason instead of
-waiting for an answer, so an enabled gate cannot silently skip a confirmation.
+waiting for an answer, so approval turned on cannot silently skip a confirmation.
 
 ## Known limitations
 
@@ -80,7 +80,7 @@ exercised by passing the platform explicitly.
 Layout:
 
 ```text
-src/index.ts    extension wiring: command, shortcut, flag, tool_call gate
+src/index.ts    extension wiring: command, shortcut, flag, tool_call hook
 src/policy.ts   pure decision logic, no Pi imports, fully unit-tested
 test/           node:test suites for both layers plus path fixtures
 ```

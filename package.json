@@ -1,13 +1,13 @@
 {
-  "name": "pi-write-permission",
+  "name": "pi-write-approval",
   "version": "0.1.0",
-  "description": "Opt-in confirmation gate for file writes, edits and shell deletions in Pi",
+  "description": "Opt-in approval prompts for file writes, edits and shell deletions in Pi",
   "type": "module",
   "license": "MIT",
   "keywords": [
     "pi-package",
     "pi-extension",
-    "permissions"
+    "approval"
   ],
   "pi": {
     "extensions": [

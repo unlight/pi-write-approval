@@ -1,5 +1,5 @@
 /**
- * Pure decision logic for the write-permission gate.
+ * Pure decision logic for the write-approval gate.
  * No Pi imports and no UI calls here, so every rule is unit-testable.
  */
 
@@ -120,7 +120,7 @@ export function evaluateToolCall(
     const path = call.input.path ?? '';
     if (isInTmp(path, tmpRoot, platform)) return ALLOW;
     const verb = call.toolName === 'write' ? 'write' : 'edit';
-    return { action: 'ask', title: `Allow file ${verb}?`, detail: path };
+    return { action: 'ask', title: `Approve file ${verb}?`, detail: path };
   }
 
   if (call.toolName === 'bash') {
@@ -129,7 +129,7 @@ export function evaluateToolCall(
     if (isDeleteInTmpOnly(command, tmpRoot, platform)) return ALLOW;
     return {
       action: 'ask',
-      title: 'Allow file deletion?',
+      title: 'Approve file deletion?',
       detail: `bash: ${command}`,
     };
   }

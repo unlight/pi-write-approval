@@ -10,7 +10,7 @@ import { join } from 'node:path';
 export const TMP_ROOT = tmpdir();
 
 /** Path outside the temp root, standing in for user files. */
-export const USER_ROOT = join(homedir(), 'write-permission-fixture');
+export const USER_ROOT = join(homedir(), 'write-approval-fixture');
 
 /** Sibling path that only shares the temp root prefix, e.g. `/tmpfoo`. */
 export const TMP_LOOKALIKE = `${TMP_ROOT}foo`;

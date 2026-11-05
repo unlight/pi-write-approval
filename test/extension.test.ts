@@ -4,7 +4,7 @@ import type {
   ExtensionAPI,
   ExtensionContext,
 } from '@earendil-works/pi-coding-agent';
-import writePermissionExtension, {
+import writeApprovalExtension, {
   EXTENSION_ID,
   SHORTCUT,
 } from '../src/index.ts';
@@ -82,7 +82,7 @@ function createHarness(options: HarnessOptions = {}) {
     getFlag: (name: string) => flags.get(name),
   } as unknown as ExtensionAPI;
 
-  writePermissionExtension(pi);
+  writeApprovalExtension(pi);
 
   return {
     asked,
@@ -164,9 +164,9 @@ describe('enabled via command', () => {
       path: inUserRoot('notes.md'),
     });
     assert.equal(harness.asked.length, 1);
-    assert.equal(harness.asked[0]?.title, 'Allow file write?');
+    assert.equal(harness.asked[0]?.title, 'Approve file write?');
     assert.equal(result?.block, true);
-    assert.equal(harness.statuses.at(-1), 'write gate: ON');
+    assert.equal(harness.statuses.at(-1), 'approval: ON');
   });
 
   it('lets the write through when the user confirms', async () => {
@@ -176,7 +176,7 @@ describe('enabled via command', () => {
       path: inUserRoot('notes.md'),
     });
     assert.equal(result, undefined);
-    assert.equal(harness.asked[0]?.title, 'Allow file edit?');
+    assert.equal(harness.asked[0]?.title, 'Approve file edit?');
   });
 
   it('asks before a shell deletion', async () => {
@@ -185,7 +185,7 @@ describe('enabled via command', () => {
     const result = await harness.callTool('bash', {
       command: `rm -rf ${inUserRoot('build')}`,
     });
-    assert.equal(harness.asked[0]?.title, 'Allow file deletion?');
+    assert.equal(harness.asked[0]?.title, 'Approve file deletion?');
     assert.equal(
       harness.asked[0]?.detail,
       `bash: rm -rf ${inUserRoot('build')}`,
@@ -257,7 +257,7 @@ describe('command arguments', () => {
     const harness = createHarness();
     await harness.runCommand('on');
     await harness.runCommand('status');
-    assert.equal(harness.notifications.at(-1)?.message, 'Write gate is on');
+    assert.equal(harness.notifications.at(-1)?.message, 'Write approval is on');
   });
 
   it('rejects unknown arguments', async () => {
@@ -282,7 +282,7 @@ describe('CLI flag', () => {
     const harness = createHarness({ confirm: false });
     harness.setFlag(true);
     await harness.startSession();
-    assert.equal(harness.statuses.at(-1), 'write gate: ON');
+    assert.equal(harness.statuses.at(-1), 'approval: ON');
     const result = await harness.callTool('write', {
       path: inUserRoot('notes.md'),
     });

@@ -1,7 +1,7 @@
 /**
  * Opt-in confirmation gate for tool writes, edits and shell deletions.
  * Default state is plain Pi behavior (no prompts); the gate can be enabled for
- * the current session with `/write-permission`, `ctrl+alt+a`, or `--write-permission`.
+ * the current session with `/write-approval`, `ctrl+alt+a`, or `--write-approval`.
  */
 
 import type {
@@ -13,9 +13,9 @@ import type { AutocompleteItem } from '@earendil-works/pi-tui';
 import { evaluateToolCall } from './policy.ts';
 
 /** Slash command, CLI flag and footer status share one identifier. */
-export const EXTENSION_ID = 'write-permission';
+export const EXTENSION_ID = 'write-approval';
 export const SHORTCUT = 'ctrl+alt+a';
-const STATUS_ON = 'write gate: ON';
+const STATUS_ON = 'approval: ON';
 
 interface GateState {
   enabled: boolean;
@@ -38,7 +38,7 @@ function argumentCompletions(prefix: string): AutocompleteItem[] | null {
   return filtered.length > 0 ? filtered : null;
 }
 
-export default function writePermissionExtension(pi: ExtensionAPI): void {
+export default function writeApprovalExtension(pi: ExtensionAPI): void {
   const state: GateState = { enabled: false };
 
   const renderStatus = (ctx: ExtensionContext): void => {
@@ -50,14 +50,14 @@ export default function writePermissionExtension(pi: ExtensionAPI): void {
     renderStatus(ctx);
     ctx.ui.notify(
       enabled
-        ? 'Write gate on — writes, edits and deletions ask for confirmation'
-        : 'Write gate off — plain Pi behavior',
+        ? 'Write approval on — writes, edits and deletions ask for confirmation'
+        : 'Write approval off — plain Pi behavior',
       enabled ? 'warning' : 'info',
     );
   };
 
   pi.registerFlag(EXTENSION_ID, {
-    description: 'Start with the write-permission gate enabled',
+    description: 'Require approval for writes, edits and deletions',
     type: 'boolean',
     default: false,
   });
@@ -68,7 +68,7 @@ export default function writePermissionExtension(pi: ExtensionAPI): void {
   });
 
   pi.registerCommand(EXTENSION_ID, {
-    description: 'Toggle confirmation prompts for writes, edits and deletions',
+    description: 'Ask for approval before writes, edits and deletions',
     getArgumentCompletions: argumentCompletions,
     handler: async (args: string, ctx: ExtensionCommandContext) => {
       const arg = args.trim().toLowerCase();
@@ -85,7 +85,7 @@ export default function writePermissionExtension(pi: ExtensionAPI): void {
           return;
         case 'status':
           ctx.ui.notify(
-            `Write gate is ${state.enabled ? 'on' : 'off'}`,
+            `Write approval is ${state.enabled ? 'on' : 'off'}`,
             'info',
           );
           return;
@@ -99,7 +99,7 @@ export default function writePermissionExtension(pi: ExtensionAPI): void {
   });
 
   pi.registerShortcut(SHORTCUT, {
-    description: 'Toggle write-permission gate',
+    description: 'Toggle write-approval prompts',
     handler: ctx => {
       setEnabled(!state.enabled, ctx);
     },
@@ -114,7 +114,7 @@ export default function writePermissionExtension(pi: ExtensionAPI): void {
     });
     if (decision.action === 'allow') return undefined;
 
-    const title = decision.title ?? 'Allow this action?';
+    const title = decision.title ?? 'Approve this action?';
     const detail = decision.detail ?? '';
 
     if (!ctx.hasUI) {

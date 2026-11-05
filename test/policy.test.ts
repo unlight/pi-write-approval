@@ -157,7 +157,7 @@ describe('evaluateToolCall', () => {
     const path = inUserRoot('notes.md');
     const decision = evaluateToolCall({ toolName: 'write', input: { path } });
     assert.equal(decision.action, 'ask');
-    assert.equal(decision.title, 'Allow file write?');
+    assert.equal(decision.title, 'Approve file write?');
     assert.equal(decision.detail, path);
   });
 
@@ -167,7 +167,7 @@ describe('evaluateToolCall', () => {
       input: { path: inUserRoot('notes.md') },
     });
     assert.equal(decision.action, 'ask');
-    assert.equal(decision.title, 'Allow file edit?');
+    assert.equal(decision.title, 'Approve file edit?');
   });
 
   it('allows writes and edits inside the temp root', () => {
@@ -187,7 +187,7 @@ describe('evaluateToolCall', () => {
     const command = `rm -rf ${inUserRoot('build')}`;
     const decision = evaluateToolCall({ toolName: 'bash', input: { command } });
     assert.equal(decision.action, 'ask');
-    assert.equal(decision.title, 'Allow file deletion?');
+    assert.equal(decision.title, 'Approve file deletion?');
     assert.equal(decision.detail, `bash: ${command}`);
   });
 
